@@ -8,21 +8,25 @@
 
 ## This function creates an "object" that wraps a matrix along with
 ## a set of getter and setter functions in a list.
-makeCacheMatrix <- function(x = matrix()) {
+makeCacheMatrix <- function(x = matrix()) { ## an empty matrix is set as default
 	inverse <- NULL
-	set <- function(y) {
+
+	## setter and getter functions for the matrix
+	setMatrix <- function(y) {
 		x <<- y
 		inverse <<- NULL
 	}
 
-	get <- function() x
+	getMatrix <- function() x
 
+	## setter and getter functions for the inverse of the matrix
 	setInverse <- function(inv) inverse <<- inv
 	
 	getInverse <- function() inverse
 
-	list(set = set,
-		get = get,
+	## return a list with 
+	list(setMatrix = setMatrix,
+		getMatrix = getMatrix,
 		setInverse = setInverse,
 		getInverse = getInverse)
 }
@@ -34,11 +38,13 @@ makeCacheMatrix <- function(x = matrix()) {
 cacheSolve <- function(x, ...) {
 	inv <- x$getInverse()
 	if(!is.null(inv)) {
+		## the inverse was already computed. return the stored value.
 		message("Getting cached matrix inverse..")
 		return(inv)
 	}
 
-	mtrx <- x$get()
+	## the matrix was newly set and the inverse isnt computed yet. compute, store it and return it.
+	mtrx <- x$getMatrix()
 	inv <- solve(mtrx, ...)
 	x$setInverse(inv)
 	inv
